@@ -1,7 +1,7 @@
 
 import streamlit as st
 import cv2
-from keras.models import load_model  # Assuming you have Keras installed
+from keras.models import load_model  # type: ignore # Assuming you have Keras installed
 import numpy as np
 import webbrowser
 import requests

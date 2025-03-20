@@ -2,15 +2,24 @@
 #Importing the libraries
 import cv2
 import PySimpleGUI as sg
-from keras.models import load_model
 import numpy as np
 import webbrowser
 from threading import Thread
 import requests
 import re
+import time
+
 
 # Load the pre-trained facial expression recognition model
-model = load_model('code/model/fer2013_mini_XCEPTION.102-0.66.hdf5')
+from keras.models import load_model # type: ignore
+from keras.optimizers import Adam # type: ignore
+
+# Load model without compilation
+model = load_model('code/model/fer2013_mini_XCEPTION.102-0.66.hdf5', compile=False)
+
+# Recompile with a new optimizer
+model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+
 emotions = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
 
 def detect_emotion(frame, face_cascade):
@@ -32,17 +41,27 @@ def video_thread(window):
     cap = cv2.VideoCapture(0)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     current_emotion = None
+    last_emotion_time = time.time()  # Track last detected emotion time
+    
     while True:
         ret, frame = cap.read()
         if ret:
             frame = cv2.resize(frame, (640, 480))  # Resize frame for better performance
-            frame_with_faces, current_detected_emotion = detect_emotion(frame, face_cascade)
-            if frame_with_faces is not None:
-                imgbytes = cv2.imencode('.png', frame_with_faces)[1].tobytes()
-                window['-IMAGE-'].update(data=imgbytes)
-                if current_detected_emotion != current_emotion:
-                    window['-EMOTION-'].update(value=f'Detected Emotion: {current_detected_emotion}')
-                    current_emotion = current_detected_emotion
+            current_time = time.time()
+            
+            # Only detect and update emotion every 180 seconds (3 minutes)
+            if current_time - last_emotion_time >= 60:  
+                frame_with_faces, current_detected_emotion = detect_emotion(frame, face_cascade)
+                if frame_with_faces is not None:
+                    imgbytes = cv2.imencode('.png', frame_with_faces)[1].tobytes()
+                    window['-IMAGE-'].update(data=imgbytes)
+                    
+                    if current_detected_emotion != current_emotion:
+                        window['-EMOTION-'].update(value=f'Detected Emotion: {current_detected_emotion}')
+                        current_emotion = current_detected_emotion
+                        last_emotion_time = current_time  # Reset timer only when emotion updates
+
+        cv2.waitKey(1)  # Allows real-time video processing
 
 def play_song_with_emotion(emotion, window):
     search_query = f"https://www.youtube.com/results?search_query={emotion}+weekend+beats"

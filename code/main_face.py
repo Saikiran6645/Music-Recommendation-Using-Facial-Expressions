@@ -1,7 +1,7 @@
 #This is the raw code without using any fancy GUI or web tool
 #Importing the libraries
 import cv2
-from keras.models import load_model
+from keras.models import load_model # type: ignore
 import numpy as np
 import webbrowser
 import requests
