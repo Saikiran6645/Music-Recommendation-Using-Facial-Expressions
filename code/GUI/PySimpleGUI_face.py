@@ -26,6 +26,11 @@ def detect_emotion(frame, face_cascade):
         roi = np.reshape(roi, (1, 64, 64, 1))
         prediction = model.predict(roi, verbose=0)
         emotion_label = emotions[np.argmax(prediction)]
+
+        # Draw rectangle and label on the frame
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.putText(frame, emotion_label, (x, y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         return emotion_label
     return None
 
@@ -49,16 +54,24 @@ def main():
             break
 
         frame = cv2.resize(frame, (640, 480))
-        cv2.imshow("Live Feed", frame)
 
         current_time = time.time()
-        if current_time - last_detection_time >= 10:  # Detect every 10 seconds
-            emotion = detect_emotion(frame, face_cascade)
-            if emotion and emotion != last_detected_emotion:
-                print(f"\n🙂 Detected Emotion: {emotion}")
-                play_song_with_emotion(emotion)
-                last_detected_emotion = emotion
-            last_detection_time = current_time
+        detected_emotion = None
+
+        if current_time - last_detection_time >= 10:
+            detected_emotion = detect_emotion(frame, face_cascade)
+            if detected_emotion and detected_emotion != last_detected_emotion:
+                print(f"\n🙂 Detected Emotion: {detected_emotion}")
+                play_song_with_emotion(detected_emotion)
+                last_detected_emotion = detected_emotion
+                last_detection_time = current_time
+        else:
+            # Still draw the last emotion if it's been recently detected
+            if last_detected_emotion:
+                cv2.putText(frame, f"{last_detected_emotion}", (20, 40),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
+
+        cv2.imshow("Emotion Detection Feed", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
