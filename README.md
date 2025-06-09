@@ -7,17 +7,16 @@ Once the emotion is detected, the application constructs a YouTube search query 
 
 This project combines elements of computer vision and deep learning with web integration to create a personalized and interactive music recommendation system. It demonstrates the potential of AI-powered emotion detection in real-world applications, where user experience can be enhanced through real-time responsiveness and intelligent content recommendations.
 
-### Installation
+## 🔧 Installation
 
-1.  **Clone the Repository:**
-    ```bash
-   https://github.com/Saikiran6645/Music-Recommendation-Using-Facial-Expressions.git
-    ```
-2.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt --quiet
-    ```
-    
+Follow these steps to set up the project locally:
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Saikiran6645/Music-Recommendation-Using-Facial-Expressions.git
+   cd Music-Recommendation-Using-Facial-Expressions
+   pip install requirements.txt
+
 ### How to Run
 
 1.  **Execute the Script:**
