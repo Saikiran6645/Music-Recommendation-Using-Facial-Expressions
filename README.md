@@ -11,7 +11,7 @@ This project combines elements of computer vision and deep learning with web int
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/SGCODEX/Music-Recommendation-Using-Facial-Expressions.git
+   https://github.com/Saikiran6645/Music-Recommendation-Using-Facial-Expressions.git
     ```
 2.  **Install Dependencies:**
     ```bash
